@@ -1,0 +1,12 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const authRoutes = require('./routes/auth');
+const studentRoutes = require('./routes/students');
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use('/auth', authRoutes);
+app.use('/students', studentRoutes);
+app.get('/', (req,res) => res.send('Prakash EduLife Backend'));
+module.exports = app;

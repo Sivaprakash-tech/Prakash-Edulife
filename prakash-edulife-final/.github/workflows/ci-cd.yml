@@ -1,0 +1,29 @@
+name: Build and Push Docker Images
+on: [push]
+env:
+  BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/prakash-backend
+  FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/prakash-frontend
+  TAG: ${{ github.sha }}
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v2
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build & push backend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ env.BACKEND_IMAGE }}:latest,${{ env.BACKEND_IMAGE }}:${{ env.TAG }}
+      - name: Build & push frontend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ env.FRONTEND_IMAGE }}:latest,${{ env.FRONTEND_IMAGE }}:${{ env.TAG }}
